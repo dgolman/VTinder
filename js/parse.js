@@ -38,6 +38,7 @@ $(function() {
 
     initialize: function() {
       _.bindAll(this, "logOut", "nextImg", "Liked", "Disliked", "findCars", "uploadImg", "getLikes");
+
       this.render();
     },
 
@@ -69,18 +70,23 @@ $(function() {
    getLikes: function(){
       var Models = new Parse.Object.extend("CarsViews");
       var query = new Parse.Query(Models);
+
       query.equalTo("username", Parse.User.current().get("username"));
       query.find({
         success: function(results) {
           alert("hey");
       }
     });
+
+     
   },
     
     Liked: function(){
       var carView = new Parse.Object("CarViews");
           carView.set("carId", $("#objectId").val());
+
           carView.set("user_id", Parse.User.current().id);
+
           carView.set("liked", true);
           carView.save();
           
@@ -90,7 +96,9 @@ $(function() {
     Disliked: function(){
      var carView = new Parse.Object("CarViews");
           carView.set("carId", $("#objectId").val());
+
           carView.set("user_id", Parse.User.current().id);
+
           carView.set("liked", false);
           carView.save();
         
@@ -137,7 +145,6 @@ $(function() {
                 $("#objectId").val(carArray[0].id);
                 $(".car-picture").attr("src", carArray[0].get("source"));
               }
-                
                  
               },
               error: function(error) {
