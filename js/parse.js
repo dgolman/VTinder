@@ -68,15 +68,30 @@ $(function() {
     },
     
    getLikes: function(){
-      var Models = new Parse.Object.extend("CarsViews");
-      var query = new Parse.Query(Models);
+      Models = Parse.Object.extend("CarViews");
+          query = new Parse.Query(Models);
+          query.equalTo("user_id", Parse.User.current().id);
+          query.find({
+              success: function(results) {
 
-      query.equalTo("username", Parse.User.current().get("username"));
-      query.find({
-        success: function(results) {
-          alert("hey");
-      }
-    });
+                  Models = Parse.Object.extend("Cars");
+                  query = new Parse.Query(Models);
+                  for(i=0;i<results.length;i++){
+                    query.equalTo("objectId", results[i].id);
+                  }
+                  query.find({
+                      success: function(results) {
+                          for(i=0;i<results.length;i++){
+                              var html = "<p>Price: "+results[i].get("price")+"</p>" + 
+                                         "<p>Year: "+results[i].get("year")+"</p>" +
+                                         "<p>Make: "+results[i].get("make")+"</p>" + 
+                                         "<p>Model: "+results[i].get("model")+"</p>";
+                               $(".sidebar-content").append(html);
+                        }
+                      }
+                  });
+                }
+            });
 
      
   },
@@ -136,6 +151,7 @@ $(function() {
                    }
                   }
                   if(count >= carArray.length){
+                      alert("No more matches found");
                       $(".car-picture").attr("src", "img/no-image-found.jpg");
                       $("#btn-dislike").hide();
                       $("#btn-like").hide();
@@ -170,6 +186,7 @@ $(function() {
     render: function() {
 
       this.$el.html(_.template($("#main-template").html()));
+      this.getLikes();
       this.findCars();
       // $("#nav").html(_.template($("#nav-template").html()));
       // this.$el.html(_.template($("#logout-template").html()));
